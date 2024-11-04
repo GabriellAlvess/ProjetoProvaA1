@@ -9,7 +9,7 @@
   avaliar e comentar sobre eles, além de visualizar os jogos mais populares e bem avaliados.
 </p>
 <br/>
-<h3>Descrição</h3>
+<h3>Funcionalidades</h3>
 <p> Funcionalidades Principais
 Cadastro e Login de Usuários:
 
