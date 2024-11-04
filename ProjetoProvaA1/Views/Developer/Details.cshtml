@@ -1,0 +1,68 @@
+﻿@model ProjetoProvaA1.Models.Developer
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2 style="color: #1E90FF; font-weight: bold;">Developer Details</h2>
+
+<div>
+    <h4 style="font-weight: bold; color: #1E90FF;">Developer</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>@Html.DisplayNameFor(model => model.Name)</dt>
+        <dd>@Html.DisplayFor(model => model.Name)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.Website)</dt>
+        <dd>@Html.DisplayFor(model => model.Website)</dd>
+    </dl>
+</div>
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" }) |
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-link" })
+</p>
+<style>
+    /* Cabeçalho principal */
+    h2 {
+        color: #1E90FF;
+        font-weight: bold;
+    }
+
+    /* Cabeçalho da seção */
+    h4 {
+        color: #1E90FF;
+    }
+
+    /* Estilos para as descrições */
+    .dl-horizontal dt {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .dl-horizontal dd {
+        margin-bottom: 10px;
+    }
+
+    /* Botões */
+    .btn-primary {
+        background-color: #1E90FF;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+
+    /* Margem entre as ações */
+    p {
+        margin-top: 20px;
+    }
+</style>

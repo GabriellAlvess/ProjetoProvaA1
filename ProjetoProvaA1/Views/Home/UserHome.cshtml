@@ -1,0 +1,16 @@
+﻿@model IEnumerable<ProjetoProvaA1.Models.Game>
+
+@{
+    ViewBag.Title = "Página Inicial do Cliente";
+}
+
+<h2>Bem-vindo à Biblioteca de Jogos</h2>
+
+<h3>Jogos Disponíveis</h3>
+@foreach (var game in Model)
+{
+    <div style="margin-bottom: 20px;">
+        <h4>@game.Title</h4>
+        <a href="@Url.Action("Details", "Game", new { id = game.Id })" class="btn btn-primary">Ver Detalhes</a>
+    </div>
+}

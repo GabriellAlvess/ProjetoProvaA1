@@ -1,0 +1,79 @@
+﻿@model ProjetoProvaA1.Models.Developer
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2 style="color: #dc3545; font-weight: bold;">Delete Developer</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4 style="font-weight: bold; color: #1E90FF;">Developer</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>@Html.DisplayNameFor(model => model.Name)</dt>
+        <dd>@Html.DisplayFor(model => model.Name)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.Website)</dt>
+        <dd>@Html.DisplayFor(model => model.Website)</dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-link" })
+        </div>
+    }
+</div>
+<style>
+    /* Cabeçalho principal */
+    h2 {
+        color: #FF6347;
+        font-weight: bold;
+    }
+
+    /* Subtítulo */
+    h3 {
+        color: #333;
+    }
+
+    /* Cabeçalho da seção */
+    h4 {
+        color: #FF6347;
+    }
+
+    /* Estilos para as descrições */
+    .dl-horizontal dt {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .dl-horizontal dd {
+        margin-bottom: 10px;
+    }
+
+    /* Botões */
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+
+    .btn-primary {
+        background-color: #1E90FF;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+
+    /* Margem para form-actions */
+    .form-actions {
+        margin-top: 20px;
+    }
+</style>
