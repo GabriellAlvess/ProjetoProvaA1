@@ -22,7 +22,7 @@ namespace ProjetoProvaA1.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -34,9 +34,9 @@ namespace ProjetoProvaA1.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -120,7 +120,7 @@ namespace ProjetoProvaA1.Controllers
             // Se um usuário inserir códigos incorretos para uma quantidade especificada de tempo, então a conta de usuário 
             // será bloqueado por um período especificado de tempo. 
             // Você pode configurar os ajustes de bloqueio da conta em IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -152,23 +152,38 @@ namespace ProjetoProvaA1.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+
+                // Verifique se UserManager e SignInManager não estão nulos e inicialize, se necessário
+                if (UserManager == null)
+                {
+                    _userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                }
+
+                if (SignInManager == null)
+                {
+                    _signInManager = HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+                }
+
+                // Verifique novamente e retorne um erro personalizado se ainda estiver nulo
+                if (UserManager == null)
+                {
+                    throw new NullReferenceException("UserManager não foi inicializado corretamente.");
+                }
+
+                if (SignInManager == null)
+                {
+                    throw new NullReferenceException("SignInManager não foi inicializado corretamente.");
+                }
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // Para obter mais informações sobre como habilitar a confirmação da conta e redefinição de senha, visite https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Enviar um email com este link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirme sua conta", "Confirme sua conta clicando <a href=\"" + callbackUrl + "\">aqui</a>");
-
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }
 
-            // Se chegamos até aqui, algo falhou, reexibir formulário
             return View(model);
         }
 
@@ -278,7 +293,7 @@ namespace ProjetoProvaA1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
-            // Solicitar um redirecionamento para o provedor de logon externo
+            // Solicitar um redirecionamento para o provedor de login externo
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
@@ -309,7 +324,7 @@ namespace ProjetoProvaA1.Controllers
                 return View();
             }
 
-            // Gerar o token e enviá-lo
+            // Gerar o token e enviar
             if (!await SignInManager.SendTwoFactorCodeAsync(model.SelectedProvider))
             {
                 return View("Error");
@@ -328,7 +343,7 @@ namespace ProjetoProvaA1.Controllers
                 return RedirectToAction("Login");
             }
 
-            // Faça logon do usuário com este provedor de logon externo se o usuário já tiver um logon
+            // Efetuar login do usuário com este provedor de login, se o usuário já tiver um login
             var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             switch (result)
             {
@@ -340,7 +355,7 @@ namespace ProjetoProvaA1.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
                 case SignInStatus.Failure:
                 default:
-                    // Se o usuário não tiver uma conta, solicite que o usuário crie uma conta
+                    // Se o usuário não tem uma conta, solicite que ele crie uma
                     ViewBag.ReturnUrl = returnUrl;
                     ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
                     return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
@@ -361,7 +376,7 @@ namespace ProjetoProvaA1.Controllers
 
             if (ModelState.IsValid)
             {
-                // Obter as informações sobre o usuário do provedor de logon externo
+                // Obter informações sobre o usuário do login externo
                 var info = await AuthenticationManager.GetExternalLoginInfoAsync();
                 if (info == null)
                 {
@@ -419,12 +434,11 @@ namespace ProjetoProvaA1.Controllers
                     _signInManager = null;
                 }
             }
-
             base.Dispose(disposing);
         }
 
         #region Auxiliares
-        // Usado para proteção XSRF ao adicionar logons externos
+        // Usado para proteção XSRF ao adicionar logins externos
         private const string XsrfKey = "XsrfId";
 
         private IAuthenticationManager AuthenticationManager

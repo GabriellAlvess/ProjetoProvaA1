@@ -19,11 +19,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.User.Name)
+            @Html.DisplayNameFor(model => model.User.UserName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.User.Name)
+            @Html.DisplayFor(model => model.User.UserName)
         </dd>
 
         <dt>
@@ -52,6 +52,11 @@
 
     </dl>
 </div>
+
+<p>
+    @Html.ActionLink("Add Review", "Create", "Review", new { gameId = Model.GameId }, new { @class = "btn btn-primary" })
+</p>
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")

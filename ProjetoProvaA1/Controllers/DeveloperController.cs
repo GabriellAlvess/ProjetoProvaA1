@@ -19,6 +19,7 @@ namespace ProjetoProvaA1
         // GET: Developer
         public ActionResult Index()
         {
+          
             return View(db.Developers.ToList());
         }
 

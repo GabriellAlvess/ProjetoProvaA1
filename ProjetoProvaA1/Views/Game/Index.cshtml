@@ -4,38 +4,54 @@
     ViewBag.Title = "Index";
 }
 
-<h2 style="color: #1E90FF; font-weight: bold;">Game List</h2>
+<h2 style="color: #1E90FF; font-weight: bold;">Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
 </p>
+<table class="table table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Developer.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReleaseDate)
+        </th>
+        <th>
+            Genres
+        </th>
+        <th></th>
+    </tr>
 
-<table class="table table-striped table-bordered">
-    <thead style="background-color: #1E90FF; color: white;">
+    @foreach (var item in Model)
+    {
         <tr>
-            <th>@Html.DisplayNameFor(model => model.Developer.Name)</th>
-            <th>@Html.DisplayNameFor(model => model.Title)</th>
-            <th>@Html.DisplayNameFor(model => model.Description)</th>
-            <th>@Html.DisplayNameFor(model => model.ReleaseDate)</th>
-            <th>Ações</th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Developer.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseDate)
+            </td>
+            <td>
+                @foreach (var genre in item.Genres)
+                {
+                    @genre.Name <br />
+                }
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-primary" }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-info" }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
+            </td>
         </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Developer.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.Title)</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>@Html.DisplayFor(modelItem => item.ReleaseDate)</td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-primary btn-sm" })
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-info btn-sm", style = "margin-left: 5px;" })
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-sm", style = "margin-left: 5px;" })
-                </td>
-            </tr>
-        }
-    </tbody>
+    }
+
 </table>
 
 <style>
@@ -45,49 +61,28 @@
         font-weight: bold;
     }
 
-    /* Botão "Create New" */
-    .btn-success {
-        background-color: #28a745;
+    /* Botões */
+    .btn-primary {
+        background-color: #1E90FF;
         color: white;
+        border: none;
         padding: 10px 20px;
         font-size: 16px;
     }
 
-    /* Estilos para tabela */
-    .table {
-        width: 100%;
-        margin-top: 15px;
-        border-collapse: collapse;
-    }
-
-        /* Cabeçalho da tabela */
-        .table thead {
-            background-color: #1E90FF;
-            color: white;
-        }
-
-        /* Linhas da tabela */
-        .table tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-    /* Botões de ação */
-    .btn-primary, .btn-info, .btn-danger {
-        color: white;
-        padding: 5px 10px;
-        font-size: 14px;
-        border: none;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-    }
-
     .btn-info {
         background-color: #17a2b8;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
     }
 
     .btn-danger {
         background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
     }
 </style>

@@ -10,7 +10,7 @@ namespace GameLibraryApp.Models
     {
         public AppDbContext() : base("AppDbContext") // Nome da conexão no Web.config
         {
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<ApplicationDbContext>());
+           
 
         }
 
@@ -26,59 +26,6 @@ namespace GameLibraryApp.Models
         public static AppDbContext Create()
         {
             return new AppDbContext();
-        }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-
-            modelBuilder.Entity<Review>()
-                .HasRequired(r => r.User)
-                .WithMany(u => u.Reviews)
-                .HasForeignKey(r => r.UserId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Review>()
-                .HasRequired(r => r.Game)
-                .WithMany(g => g.Reviews)
-                .HasForeignKey(r => r.GameId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Game>()
-                .HasRequired(g => g.Developer)
-                .WithMany(d => d.Games)
-                .HasForeignKey(g => g.DeveloperId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Game>()
-                .HasMany(g => g.Genres)
-                .WithMany(gen => gen.Games)
-                .Map(m =>
-                {
-                    m.ToTable("GameGenres");
-                    m.MapLeftKey("GameId");
-                    m.MapRightKey("GenreId");
-                });
-
-            // Configurando chave composta para UserGameLibrary
-            modelBuilder.Entity<UserGameLibrary>()
-                .HasKey(ug => new { ug.UserId, ug.GameId });
-
-            modelBuilder.Entity<UserGameLibrary>()
-                .HasRequired(ug => ug.User)
-                .WithMany(u => u.Library)
-                .HasForeignKey(ug => ug.UserId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<UserGameLibrary>()
-                .HasRequired(ug => ug.Game)
-                .WithMany()
-                .HasForeignKey(ug => ug.GameId)
-                .WillCascadeOnDelete(false);
-
-            base.OnModelCreating(modelBuilder);
         }
 
 

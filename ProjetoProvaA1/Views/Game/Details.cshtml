@@ -10,43 +10,57 @@
     <h4 style="color: #1E90FF;">Game</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt style="font-weight: bold;">
-            @Html.DisplayNameFor(model => model.Developer.Name)
-        </dt>
-        <dd style="margin-bottom: 10px;">
-            @Html.DisplayFor(model => model.Developer.Name)
-        </dd>
-
-        <dt style="font-weight: bold;">
+        <dt>
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd style="margin-bottom: 10px;">
+        <dd>
             @Html.DisplayFor(model => model.Title)
         </dd>
-
-        <dt style="font-weight: bold;">
+        <dt>
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd style="margin-bottom: 10px;">
+        <dd>
             @Html.DisplayFor(model => model.Description)
         </dd>
-
-        <dt style="font-weight: bold;">
+        <dt>
             @Html.DisplayNameFor(model => model.ReleaseDate)
         </dt>
-        <dd style="margin-bottom: 10px;">
+        <dd>
             @Html.DisplayFor(model => model.ReleaseDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Developer.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Developer.Name)
+        </dd>
+        <dt>
+            Genres
+        </dt>
+        <dd>
+            @foreach (var genre in Model.Genres)
+            {
+                @genre.Name <br />
+            }
+        </dd>
+        <dt>
+            Reviews
+        </dt>
+        <dd>
+            @foreach (var review in Model.Reviews)
+            {
+                <strong>@review.User.UserName</strong>: @review.Comment <br />
+            }
         </dd>
     </dl>
 </div>
-
-<p style="margin-top: 20px;">
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary", style = "margin-right: 10px;" })
-    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" }) |
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary", style = "margin-left: 10px;" })
 </p>
 
 <style>
-    /* Cabeçalho principal */
+    /* Título */
     h2 {
         color: #1E90FF;
         font-weight: bold;
@@ -57,22 +71,12 @@
         color: #1E90FF;
     }
 
-    /* Estilos para as descrições */
-    .dl-horizontal dt {
-        font-weight: bold;
-        color: #555;
-    }
-
-    .dl-horizontal dd {
-        margin-bottom: 10px;
-    }
-
     /* Botões */
     .btn-primary {
         background-color: #1E90FF;
         color: white;
         border: none;
-        padding: 10px 15px;
+        padding: 10px 20px;
         font-size: 16px;
     }
 
@@ -80,12 +84,12 @@
         background-color: #6c757d;
         color: white;
         border: none;
-        padding: 10px 15px;
+        padding: 10px 20px;
         font-size: 16px;
     }
 
-    /* Margem entre as ações */
-    p {
-        margin-top: 20px;
+    /* Margem entre os botões */
+    .col-md-offset-2 .btn-secondary {
+        margin-left: 10px;
     }
 </style>

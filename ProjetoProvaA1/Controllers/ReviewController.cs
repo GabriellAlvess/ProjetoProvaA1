@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using GameLibraryApp.Models;
+using Microsoft.AspNet.Identity;
 using ProjetoProvaA1.Models;
 
 namespace ProjetoProvaA1.Controllers
@@ -38,27 +39,25 @@ namespace ProjetoProvaA1.Controllers
         }
 
         // GET: Review/Create
-        public ActionResult Create()
+        public ActionResult Create(int gameId)
         {
-            ViewBag.GameId = new SelectList(db.Games, "Id", "Title");
-            ViewBag.UserId = new SelectList(db.Users, "Id", "Name");
-            return View();
+            var model = new Review { GameId = gameId };
+            return View(model);
         }
 
         // POST: Review/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Rating,Comment,GameId,UserId,ReviewDate")] Review review)
+        public ActionResult Create(Review review)
         {
             if (ModelState.IsValid)
             {
+                // Adicione a lógica para salvar a revisão no banco de dados
                 db.Reviews.Add(review);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Game", new { id = review.GameId });
             }
 
-            ViewBag.GameId = new SelectList(db.Games, "Id", "Title", review.GameId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "Name", review.UserId);
             return View(review);
         }
 

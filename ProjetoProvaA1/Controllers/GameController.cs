@@ -19,13 +19,7 @@ namespace ProjetoProvaA1
         // GET: Game
         public ActionResult Index()
         {
-            var games = db.Games.Include(g => g.Developer);
-            return View(games.ToList());
-        }
-
-        public ActionResult FormGame()
-        {
-            var games = db.Games.ToList();
+            var games = db.Games.Include(g => g.Developer).Include(g => g.Genres).ToList();
             return View(games);
         }
 
@@ -36,7 +30,7 @@ namespace ProjetoProvaA1
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Game game = db.Games.Find(id);
+            Game game = db.Games.Include(g => g.Developer).Include(g => g.Genres).Include(g => g.Reviews.Select(r => r.User)).FirstOrDefault(g => g.Id == id);
             if (game == null)
             {
                 return HttpNotFound();
@@ -48,15 +42,14 @@ namespace ProjetoProvaA1
         public ActionResult Create()
         {
             ViewBag.DeveloperId = new SelectList(db.Developers, "Id", "Name");
+            ViewBag.Genres = new MultiSelectList(db.Genres, "Id", "Name");
             return View();
         }
 
         // POST: Game/Create
-        // Para proteger-se contra ataques de excesso de postagem, ative as propriedades específicas às quais deseja se associar. 
-        // Para obter mais detalhes, confira https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Title,Description,ReleaseDate,DeveloperId,GenreId")] Game game)
+        public ActionResult Create(Game game)
         {
             if (ModelState.IsValid)
             {
@@ -66,50 +59,65 @@ namespace ProjetoProvaA1
             }
 
             ViewBag.DeveloperId = new SelectList(db.Developers, "Id", "Name", game.DeveloperId);
+            ViewBag.Genres = new MultiSelectList(db.Genres, "Id", "Name", game.SelectedGenreIds);
             return View(game);
         }
 
-        // GET: Game/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Game game = db.Games.Find(id);
+            Game game = db.Games.Include(g => g.Genres).FirstOrDefault(g => g.Id == id);
             if (game == null)
             {
                 return HttpNotFound();
             }
             ViewBag.DeveloperId = new SelectList(db.Developers, "Id", "Name", game.DeveloperId);
+            ViewBag.Genres = new MultiSelectList(db.Genres, "Id", "Name", game.Genres.Select(g => g.Id));
             return View(game);
         }
 
-        // POST: Game/Edit/5
-        // Para proteger-se contra ataques de excesso de postagem, ative as propriedades específicas às quais deseja se associar. 
-        // Para obter mais detalhes, confira https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,Description,ReleaseDate,DeveloperId,GenreId")] Game game)
+        public ActionResult Edit(Game game)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(game).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                var existingGame = db.Games.Include(g => g.Genres).FirstOrDefault(g => g.Id == game.Id);
+                if (existingGame != null)
+                {
+                    existingGame.Title = game.Title;
+                    existingGame.Description = game.Description;
+                    existingGame.ReleaseDate = game.ReleaseDate;
+                    existingGame.DeveloperId = game.DeveloperId;
+                    existingGame.Genres.Clear();
+                    foreach (var genreId in game.SelectedGenreIds)
+                    {
+                        var genre = db.Genres.Find(genreId);
+                        if (genre != null)
+                        {
+                            existingGame.Genres.Add(genre);
+                        }
+                    }
+                    db.Entry(existingGame).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
             ViewBag.DeveloperId = new SelectList(db.Developers, "Id", "Name", game.DeveloperId);
+            ViewBag.Genres = new MultiSelectList(db.Genres, "Id", "Name", game.SelectedGenreIds);
             return View(game);
         }
 
-        // GET: Game/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Game game = db.Games.Find(id);
+            Game game = db.Games.Include(g => g.Developer).Include(g => g.Genres).FirstOrDefault(g => g.Id == id);
             if (game == null)
             {
                 return HttpNotFound();
@@ -117,14 +125,17 @@ namespace ProjetoProvaA1
             return View(game);
         }
 
-        // POST: Game/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Game game = db.Games.Find(id);
-            db.Games.Remove(game);
-            db.SaveChanges();
+            Game game = db.Games.Include(g => g.Genres).FirstOrDefault(g => g.Id == id);
+            if (game != null)
+            {
+                game.Genres.Clear();
+                db.Games.Remove(game);
+                db.SaveChanges();
+            }
             return RedirectToAction("Index");
         }
 
